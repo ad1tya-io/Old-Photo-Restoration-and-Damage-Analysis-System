@@ -308,13 +308,13 @@ if uploaded is None:
         3. **Display** a before / after comparison
 
         #### Techniques Used
-        | Stage | Algorithm | Syllabus Module |
-        |-------|-----------|-----------------|
-        | Noise reduction | Bilateral Filter | Module 1 – Filtering |
-        | Contrast enhancement | CLAHE (Luminance channel) | Module 1 – Histogram Processing |
-        | Scratch / dust removal | Morphological Top-Hat + Telea Inpainting | Module 3 – Morphology |
-        | Sharpening | Unsharp Masking | Module 1 – Filtering / Enhancement |
-        | Frequency visualisation | 2D DFT magnitude spectrum | Module 1 – Fourier Transform |
+        | Stage | Algorithm |
+        |-------|-----------|
+        | Noise reduction | Bilateral Filter |
+        | Contrast enhancement | CLAHE (Luminance channel) |
+        | Scratch / dust removal | Morphological Top-Hat + Telea Inpainting |
+        | Sharpening | Unsharp Masking |
+        | Frequency visualisation | 2D DFT magnitude spectrum |
         """
     )
     st.stop()
