@@ -522,7 +522,7 @@ Streamlit    1.64.0
 Clone the repository:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/ad1tya-io/Old-Photo-Restoration-and-Damage-Analysis-System.git
 cd Old-Photo-Restoration
 ```
 
