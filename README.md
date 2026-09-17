@@ -25,6 +25,8 @@ The system supports both:
 1. **Real damaged photographs** for qualitative evaluation
 2. **Synthetic degraded photographs with clean ground truth** for quantitative evaluation
 
+The core restoration system is fully executable from the command line and does not require a GUI-based setup. A Streamlit interface is also provided as an optional interactive frontend.
+
 ---
 
 ## Key Features
@@ -44,6 +46,7 @@ The system supports both:
 * FFT-based frequency analysis
 * Adaptive restoration pipeline
 * MSE, PSNR, and SSIM evaluation
+* Command-line execution
 * Streamlit interactive interface
 * Ground-truth evaluation mode
 * Real-image qualitative evaluation
@@ -53,57 +56,57 @@ The system supports both:
 
 ---
 
-## System Architecture
+# System Architecture
 
 ```text
-                     +----------------------+
-                     |     Input Image      |
-                     +----------+-----------+
-                                |
-                                v
-                 +--------------+---------------+
-                 |      Input Validation        |
-                 +--------------+---------------+
-                                |
-                                v
-                 +--------------+---------------+
-                 |   Degradation Analyzer      |
-                 |------------------------------|
-                 | Noise   | Blur | Contrast    |
-                 | Brightness | Artifacts       |
-                 +--------------+---------------+
-                                |
-                                v
-                 +--------------+---------------+
-                 |    Adaptive Decision Layer   |
-                 +--------------+---------------+
-                                |
-             +------------------+------------------+
-             |                  |                  |
-             v                  v                  v
+                      +----------------------+
+                      |     Input Image      |
+                      +----------+-----------+
+                                 |
+                                 v
+                  +--------------+---------------+
+                  |      Input Validation        |
+                  +--------------+---------------+
+                                 |
+                                 v
+                  +--------------+---------------+
+                  |   Degradation Analyzer      |
+                  |------------------------------|
+                  | Noise   | Blur | Contrast    |
+                  | Brightness | Artifacts       |
+                  +--------------+---------------+
+                                 |
+                                 v
+                  +--------------+---------------+
+                  |    Adaptive Decision Layer   |
+                  +--------------+---------------+
+                                 |
+             +-------------------+-------------------+
+             |                   |                   |
+             v                   v                   v
        Noise Removal      Contrast Recovery   Artifact Removal
        Bilateral Filter       CLAHE             Inpainting
-             |                  |                  |
-             +------------------+------------------+
-                                |
-                                v
-                       Blur Compensation
-                         Unsharp Mask
-                                |
-                                v
-                 +--------------+---------------+
-                 |     Restored Image          |
-                 +--------------+---------------+
-                                |
-                 +--------------+---------------+
-                 |       Evaluation            |
-                 | MSE | PSNR | SSIM | Runtime |
-                 +------------------------------+
+             |                   |                   |
+             +-------------------+-------------------+
+                                 |
+                                 v
+                         Blur Compensation
+                           Unsharp Mask
+                                 |
+                                 v
+                  +--------------+---------------+
+                  |     Restored Image          |
+                  +--------------+---------------+
+                                 |
+                  +--------------+---------------+
+                  |       Evaluation            |
+                  | MSE | PSNR | SSIM | Runtime |
+                  +------------------------------+
 ```
 
 ---
 
-## Workflow
+# Workflow
 
 ```text
 Load Image
@@ -177,7 +180,7 @@ dataset/
 └── image_classification_results.csv
 ```
 
-### Dataset Statistics
+## Dataset Statistics
 
 | Dataset Component         | Images |
 | ------------------------- | -----: |
@@ -191,9 +194,9 @@ The synthetic dataset contains **438 confirmed clean/degraded pairs** with no mi
 
 ---
 
-## Synthetic Degradation Categories
+# Synthetic Degradation Categories
 
-### `Faded_Scratches_Blur`
+## `Faded_Scratches_Blur`
 
 Contains synthetic degradation involving combinations of:
 
@@ -201,7 +204,7 @@ Contains synthetic degradation involving combinations of:
 * Scratches
 * Blur
 
-### `Noise_JPEG_Blur`
+## `Noise_JPEG_Blur`
 
 Contains combinations of:
 
@@ -209,7 +212,7 @@ Contains combinations of:
 * JPEG degradation
 * Blur
 
-### `Complex_All`
+## `Complex_All`
 
 Contains a more complex combination of degradation types.
 
@@ -299,8 +302,6 @@ Default:
 noise_threshold = 3.5
 ```
 
----
-
 ## Blur
 
 Blur is estimated using the variance of the Laplacian.
@@ -312,8 +313,6 @@ Default:
 ```text
 blur_threshold = 100.0
 ```
-
----
 
 ## Contrast
 
@@ -327,13 +326,9 @@ Default:
 contrast_threshold = 45.0
 ```
 
----
-
 ## Brightness
 
 Mean grayscale intensity is used as a basic indicator of image brightness and fading.
-
----
 
 ## Artifact Detection
 
@@ -378,11 +373,11 @@ The pipeline dynamically chooses restoration operations based on the degradation
               |              |              |
               +--------------+--------------+
                              |
-                          Blurry?
+                           Blurry?
                              |
                             Yes
                              |
-                       Unsharp Mask
+                        Unsharp Mask
                              |
                              v
                        Restored Image
@@ -424,7 +419,7 @@ Example conceptual representation:
 Spatial Image
      |
      v
-     FFT
+    FFT
      |
      v
 Frequency Spectrum
@@ -457,6 +452,7 @@ Old-Photo-Restoration/
 │
 ├── src/
 │   ├── __init__.py
+│   ├── cli.py
 │   ├── dataset_loader.py
 │   ├── metrics.py
 │   ├── restoration.py
@@ -515,8 +511,6 @@ Matplotlib   3.11.2
 Streamlit    1.64.0
 ```
 
----
-
 ## Setup
 
 Clone the repository:
@@ -572,9 +566,76 @@ The dataset should not be committed to the repository.
 
 ---
 
-# Running the Application
+# Running the Project from the Command Line
 
-Launch the Streamlit application:
+The restoration system provides a dedicated command-line execution path.
+
+This is the primary non-GUI execution method and allows the project to be run directly from a terminal environment without Streamlit or any browser-based setup.
+
+## Restore an Image
+
+Use:
+
+```bash
+uv run python -m src.cli --input path/to/input.jpg --output results/restored.png
+```
+
+For example:
+
+```bash
+uv run python -m src.cli --input test_images/old_photo.jpg --output results/restored.png
+```
+
+The command-line pipeline performs:
+
+```text
+Input Image
+    ↓
+Input Validation
+    ↓
+Degradation Analysis
+    ↓
+Adaptive Restoration
+    ↓
+Restored Image
+    ↓
+Output File
+```
+
+The CLI reports the detected degradation characteristics and the restoration operations applied.
+
+A successful execution produces a restored image at the specified output path.
+
+## CLI Help
+
+To view the available command-line options:
+
+```bash
+uv run python -m src.cli --help
+```
+
+## Command-Line Execution Requirements
+
+The CLI is designed to:
+
+* Accept an image path as input
+* Validate the input image
+* Run the same core `RestorationPipeline` used by the application
+* Report detected degradation
+* Report restoration operations applied
+* Save the restored image to a specified output path
+* Handle invalid input paths and image errors
+* Exit without requiring a GUI or browser
+
+This makes the core project executable in a terminal-only environment.
+
+---
+
+# Running the Interactive Application
+
+The Streamlit interface is optional and is provided for interactive visualization.
+
+Launch the application:
 
 ```bash
 uv run streamlit run app.py
@@ -614,8 +675,6 @@ The interface displays:
 * Optional artifact mask
 * Optional frequency spectrum
 * Restored image download
-
----
 
 ## 2. Ground-Truth Evaluation Demo
 
@@ -668,7 +727,7 @@ Higher SSIM indicates greater structural similarity.
 
 ---
 
-## Real-Image Qualitative Evaluation
+# Real-Image Qualitative Evaluation
 
 The 54 real damaged images do not have confirmed clean ground truth.
 
@@ -725,8 +784,6 @@ Improvement:
 * MSE/PSNR: 74.0% of images
 * SSIM: 86.3% of images
 
----
-
 ## Noise + JPEG + Blur
 
 | Metric | Before |  After |
@@ -739,8 +796,6 @@ Improvement:
 
 * MSE/PSNR: 77.4% of images
 * SSIM: 64.4% of images
-
----
 
 ## Complex All
 
@@ -841,21 +896,34 @@ Current result:
 
 The complete test suite passes successfully.
 
+The command-line interface should also be verified independently with:
+
+```bash
+uv run python -m src.cli --help
+```
+
+and with a valid test image:
+
+```bash
+uv run python -m src.cli --input path/to/input.jpg --output results/cli_test.png
+```
+
 ---
 
 # Functional Requirements
 
 The system provides the following major functional modules.
 
-| Module               | Input                    | Output                 |
-| -------------------- | ------------------------ | ---------------------- |
-| Dataset Loader       | Dataset directory        | Validated image pairs  |
-| Degradation Analyzer | RGB image                | Degradation report     |
-| Restoration Pipeline | RGB image + report       | Restored image         |
-| Artifact Removal     | Image + artifact mask    | Artifact-reduced image |
-| Frequency Analysis   | Image                    | FFT / filtered image   |
-| Evaluation           | Original + restored + GT | MSE / PSNR / SSIM      |
-| Streamlit UI         | User image               | Interactive result     |
+| Module                 | Input                    | Output                 |
+| ---------------------- | ------------------------ | ---------------------- |
+| Dataset Loader         | Dataset directory        | Validated image pairs  |
+| Degradation Analyzer   | RGB image                | Degradation report     |
+| Restoration Pipeline   | RGB image + report       | Restored image         |
+| Artifact Removal       | Image + artifact mask    | Artifact-reduced image |
+| Frequency Analysis     | Image                    | FFT / filtered image   |
+| Evaluation             | Original + restored + GT | MSE / PSNR / SSIM      |
+| Command-Line Interface | Image path               | Restored image file    |
+| Streamlit UI           | User image               | Interactive result     |
 
 ---
 
@@ -883,6 +951,8 @@ The system is divided into independent Python modules with focused responsibilit
 
 The Streamlit interface provides visual before/after comparisons and exposes the detected degradation and applied operations.
 
+The command-line interface provides a terminal-only execution path for environments where a GUI is unavailable.
+
 ## Resource Efficiency
 
 Images are processed individually rather than loading the complete dataset into memory simultaneously.
@@ -893,7 +963,11 @@ The Python environment and dependencies are managed through `uv` and `uv.lock`.
 
 ## Error Handling
 
-Dataset loading, image validation, metric calculation, and pipeline processing include explicit validation and exception handling.
+Dataset loading, image validation, metric calculation, CLI execution, and pipeline processing include explicit validation and exception handling.
+
+## Terminal Executability
+
+The core restoration functionality can be executed from a command line without requiring Streamlit, a web browser, or a GUI-based setup.
 
 ---
 
@@ -905,15 +979,11 @@ The project intentionally uses classical techniques because the objective is to 
 
 This also makes the restoration decisions interpretable.
 
----
-
 ## Adaptive Processing
 
 Instead of applying every restoration operation to every image, the pipeline first estimates degradation and then selects operations.
 
 This reduces unnecessary processing and makes the system more modular.
-
----
 
 ## LAB Luminance Processing
 
@@ -921,15 +991,11 @@ Contrast enhancement is applied to the luminance component rather than independe
 
 This helps reduce unwanted color shifts.
 
----
-
 ## Conservative Artifact Removal
 
 Artifact masks are refined using connected-component size filtering.
 
 The objective is to reduce the possibility of treating large legitimate structures as scratches or dust.
-
----
 
 ## No Silent Resizing
 
@@ -937,21 +1003,27 @@ Metric calculations require compatible dimensions.
 
 Images are not silently resized because doing so could hide dataset or processing errors.
 
+## Shared Core Pipeline
+
+Both the command-line interface and Streamlit application use the same restoration pipeline rather than maintaining separate restoration implementations.
+
+This reduces duplicated logic and keeps command-line and interactive execution behavior consistent.
+
 ---
 
 # Limitations
 
 The current system has several limitations.
 
-### No Ground Truth for Real Damaged Images
+## No Ground Truth for Real Damaged Images
 
 The real photographs cannot be evaluated using full-reference metrics because clean reference images are unavailable.
 
-### Fixed Thresholds
+## Fixed Thresholds
 
 The degradation detector uses fixed thresholds that may not generalize perfectly to every image collection.
 
-### Conservative Artifact Detection
+## Conservative Artifact Detection
 
 Small artifacts can be detected successfully, but large tears or holes may be ignored.
 
@@ -962,15 +1034,15 @@ minimum area = 5 pixels
 maximum area = 500 pixels
 ```
 
-### Texture Confusion
+## Texture Confusion
 
 Strong image textures may sometimes resemble scratches or small artifacts.
 
-### Frequency Mask Ringing
+## Frequency Mask Ringing
 
 Binary frequency-domain masks may introduce ringing artifacts around strong edges.
 
-### Classical Restoration Limits
+## Classical Restoration Limits
 
 Severely damaged regions cannot always be reconstructed accurately using local filtering and inpainting alone.
 
@@ -1035,7 +1107,7 @@ The project focuses on concepts that directly support image restoration rather t
 
 # Reproducibility
 
-To reproduce the evaluation:
+Install dependencies:
 
 ```bash
 uv sync
@@ -1045,6 +1117,18 @@ Run tests:
 
 ```bash
 uv run pytest
+```
+
+Run the command-line restoration:
+
+```bash
+uv run python -m src.cli --input path/to/input.jpg --output results/restored.png
+```
+
+Run the CLI help:
+
+```bash
+uv run python -m src.cli --help
 ```
 
 Run the Streamlit application:
@@ -1072,6 +1156,24 @@ results/
 ```
 
 and are excluded from Git.
+
+---
+
+# Command-Line Execution Example
+
+A complete terminal-only workflow is:
+
+```bash
+git clone https://github.com/ad1tya-io/Old-Photo-Restoration-and-Damage-Analysis-System.git
+cd Old-Photo-Restoration
+uv sync
+uv run python -m src.cli --help
+uv run python -m src.cli --input path/to/old_photo.jpg --output results/restored.png
+```
+
+No Streamlit server or browser is required for this workflow.
+
+The command-line interface uses the same `RestorationPipeline` as the interactive application, ensuring that the core restoration behavior is consistent across execution modes.
 
 ---
 
@@ -1121,6 +1223,8 @@ Frequency Analysis
 Quantitative / Qualitative Evaluation
 ```
 
+The core system is executable from the command line, while the Streamlit application provides an optional interactive interface.
+
 The project demonstrates how classical computer vision techniques can be combined into a modular restoration system without relying on deep learning.
 
 The synthetic dataset provides controlled quantitative evaluation through clean/degraded image pairs, while the real damaged dataset provides a practical qualitative evaluation scenario.
@@ -1138,6 +1242,5 @@ The dataset remains subject to the licensing and usage terms specified by its or
 # Author
 
 **Aditya Singh**
-
 
 **Old Photo Restoration and Damage Analysis System**
