@@ -1137,8 +1137,7 @@ The dataset remains subject to the licensing and usage terms specified by its or
 
 # Author
 
-**[Your Name]**
+**Aditya Singh**
 
-Computer Vision Course Project
 
 **Old Photo Restoration and Damage Analysis System**
