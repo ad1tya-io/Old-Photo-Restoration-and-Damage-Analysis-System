@@ -57,11 +57,19 @@ $RECYCLE.BIN/
 .DS_Store
 
 # Logs & Temporary files
+
 *.log
 scratch/
 tmp/
 temp/
 
+# Environment / Secrets
+
+.env
+.env.*
+!.env.example
+
 # Dataset & Generated Outputs
+
 dataset/
-results/generated_images/
+results/
